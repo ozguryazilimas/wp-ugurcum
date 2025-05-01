@@ -3,7 +3,7 @@
 Plugin Name: Ugurcum
 Plugin URI: http://www.ozguryazilim.com.tr
 Description: This plugin displays a list of multimedia files in a fancy way. Allows addition for logged in users, and modification for admin users.
-Version: 1.3.0
+Version: 1.4.0
 Author: Onur Küçük
 Author URI: http://www.delipenguen.net
 License: GPL2
@@ -25,8 +25,6 @@ License: GPL2
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-require_once(dirname(__FILE__) . '/includes/ugurcum_common.php');
-$wp_uw = new WP_Ugurcum_Widget();
 
 global $ugurcum_db_version;
 $ugurcum_db_version = "1.0";
@@ -40,7 +38,8 @@ $installed_version = get_option('ugurcum_db_version');
 global $installed_version;
 
 //widget
-add_action('widgets_init', 'ugurcum_init');
+add_action('widgets_init', 'ugurcum_init_widget');
+add_action('plugins_loaded', 'ugurcum_init_textdomain');
 
 // add css
 // add_action('init', 'ugurcum_add_assets');
@@ -101,9 +100,15 @@ function ugurcum_add_assets() {
 }
 add_action('wp_enqueue_scripts', 'ugurcum_add_assets');
 
-function ugurcum_init() {
-  load_plugin_textdomain('ugurcum', false, basename(dirname(__FILE__)) . '/languages' );
+function ugurcum_init_widget() {
+  global $wp_uw;
+  require_once(dirname(__FILE__) . '/includes/ugurcum_common.php');
+  $wp_uw = new WP_Ugurcum_Widget();
   register_widget('WP_Ugurcum_Widget');
+}
+
+function ugurcum_init_textdomain() {
+  load_plugin_textdomain('ugurcum', false, basename(dirname(__FILE__)) . '/languages' );
 }
 
 add_action('template_redirect', 'ugurcum_custom_page_template_redirect');
